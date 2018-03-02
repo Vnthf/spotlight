@@ -1,0 +1,36 @@
+{
+  "name": "spotlight",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "webpack-dev-server --mode development",
+    "build": "webpack --mode production",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vnthf/spotlight.git"
+  },
+  "author": "minho-choi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Vnthf/spotlight/issues"
+  },
+  "homepage": "https://github.com/Vnthf/spotlight#readme",
+  "devDependencies": {
+    "webpack": "^4.0.1",
+    "webpack-cli": "^2.0.9",
+    "webpack-dev-server": "^3.1.0",
+    "babel-eslint": "^8.0.0",
+    "babel-loader": "^8.0.0-beta.1",
+    "@babel/cli": "7.0.0-beta.40",
+    "@babel/core": "7.0.0-beta.40",
+    "@babel/preset-env": "7.0.0-beta.40",
+    "@babel/preset-flow": "7.0.0-beta.40",
+    "@babel/preset-stage-0": "7.0.0-beta.40",
+    "@babel/register": "7.0.0-beta.40",
+    "css-loader": "^0.28.7",
+    "style-loader": "^0.18.2"
+  }
+}
