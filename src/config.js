@@ -1,11 +1,7 @@
-export const DEFAULT_OPTION = {
-	dimmedColor: `rgba(0,0,0,0.4)`,
-	zoomKey: 'ctrlKey'
-};
-
+import {isMac} from './util'
 
 export const KEY_CODE = {
 	ESC: 27,
 	SHIFT: 16,
-	CTRL: 17
+	CTRL: isMac() ? 91: 17
 };

@@ -1,137 +1,133 @@
-
-import {KEY_CODE, DEFAULT_OPTION} from "./config";
+import {KEY_CODE} from "./config";
+import util from './util'
 import "./polyfill"
 import "./spotlight.css"
 
-let $mask,
-	$zoom,
-	$zoomScroller,
-	defaultTop,
-	defaultLeft, x, y,
-	option;
-
-function SpotLight(_option) { //device detector 고려
-	option = Object.assign({}, _option, DEFAULT_OPTION);
-	if(!option.el) {
-		option.el = document.body.firstElementChild;
-	}
-	window.getComputedStyle(document.getElementById('content'), null)['backgroundColor']
-	if(!option.radius) {
-		option.radius = option.el.getBoundingClientRect().height / 4
-	}
-	var isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-	console.log(option)
-	if (isMac) {
-		KEY_CODE.CTRL = 91;
-		option.zoomKey = 'metaKey';
+class SpotLight {
+	constructor(option) {
+		this.option = this._computeOption(option);
+		this._attachEvent();
 	}
 
-	document.addEventListener('keyup', function (e) {
-		console.log(e)
-		if (KEY_CODE.SHIFT === e.keyCode) {
-			stopMask();
+	_computeOption(option) {
+		let el = option.el || document.body.firstElementChild;
+
+		let defaultOption = {
+			dimmedColor: `rgba(0,0,0,0.4)`,
+			zoomedColor: window.getComputedStyle(el, null)['backgroundColor'],
+			zoomKey: util.isMac()? 'metaKey': 'ctrlKey',
+			el: el,
+			radius: option.el.getBoundingClientRect().height / 4
+		};
+
+		return Object.assign({}, option, defaultOption);
+	}
+
+	_attachEvent() {
+		document.addEventListener('keyup', (e) => {
+			if (KEY_CODE.SHIFT === e.keyCode) {
+				this.stopMask();
+			}
+
+			if (KEY_CODE.CTRL === e.keyCode) {
+				this.stopZoom();
+			}
+		});
+
+		document.addEventListener('keydown', (e) => {
+			if (KEY_CODE.SHIFT === e.keyCode) {
+				this.startMask();
+			}
+
+			if (e.shiftKey && KEY_CODE.CTRL === e.keyCode) {
+				this.startZoom(e);
+			}
+		});
+
+		document.addEventListener('mousemove', this.onMove.bind(this));
+	}
+
+	startMask() {
+		if(this.$mask) {
+			return;
+		}
+		this.$mask = document.createElement('div');
+		this.$mask.classList.add('spotlight-mask');
+		document.body.appendChild(this.$mask);
+		this.setMask();
+	}
+
+	setMask() {
+		let imageCss = util.getMaskBackground(this.x, this.y, this.option);
+		this.$mask.setAttribute('style', `background-image: ${imageCss}; background-image: -webkit-${imageCss};`)
+	}
+
+	stopMask() {
+		this.$mask && this.$mask.remove();
+		this.stopZoom();
+		this.$mask = null;
+	}
+
+	startZoom() {
+		if(this.$zoom) {
+			return;
+		}
+		this.$zoom = document.createElement('div');
+		this.$zoom.classList.add('spotlight-zoom');
+		this.$zoomScroller = this.option.el.cloneNode(true);
+		this.$zoomScroller.classList.add('spotlight-zoom-scroller');
+		this.$zoom.setAttribute('style', `
+			width: ${this.option.radius}px; 
+			height: ${this.option.radius}px;`
+		);
+		this.$zoomScroller.style.backgroundColor = this.option.zoomedColor;
+		console.log(this.option)
+		this.$zoomScroller.style.position = 'fixed';
+		document.body.appendChild(this.$zoom);
+		this.$zoom.appendChild(this.$zoomScroller);
+		// $zoom.find('.remark-slide-content').scrollTop($document.find('.remark-slide-container.remark-visible .remark-slide-content').scrollTop());
+		this.setZoom();
+	}
+
+	setZoom() {
+		this.$zoom.style.top = `${this.y - this.option.radius / 2}px`;
+		this.$zoom.style.left = `${this.x - this.option.radius / 2}px`;
+		console.log(this.option.el.scrollTop)
+		this.$zoomScroller.scrollTop = parseInt(this.option.el.scrollTop, 10);
+		this.$zoomScroller.scrollLeft = parseInt(this.option.el.scrollLeft, 10);
+		this.$zoomScroller.style.marginTop = -this.y + this.option.radius / 2 + 'px';
+		this.$zoomScroller.style.marginLeft = -this.x + this.option.radius/ 2 + 'px';
+	}
+
+	stopZoom() {
+		// this.$zoom && this.$zoom.remove();
+		// this.$zoom = null;
+	}
+
+	onMove(e) {
+		// console.log(e)
+		this.x = e.pageX;
+		this.y = e.pageY;
+
+		if(!this.$mask) {
+			return;
 		}
 
-		if (KEY_CODE.CTRL === e.keyCode) {
-			// stopZoom();
-		}
-	});
-
-	document.addEventListener('keydown', function (e) {
-		if (KEY_CODE.SHIFT === e.keyCode) {
-			startMask();
+		if (!e.shiftKey) {
+			this.stopMask();
 		}
 
-		if (e.shiftKey && KEY_CODE.CTRL === e.keyCode) {
-			startZoom(e);
+		console.log(this.option.zoomKey)
+		if (!e[this.option.zoomKey] && this.$zoom) {
+			this.stopZoom();
 		}
-	});
 
-	document.addEventListener('mousemove', setSpotLight);
-}
+		this.setMask();
 
-function startMask() {
-	if($mask) {
-		return;
+		if (e[this.option.zoomKey]) {
+			this.setZoom();
+		}
 	}
-	$mask = document.createElement('div');
-	$mask.classList.add('spotlight-mask');
-	document.body.appendChild($mask);
-	setMask();
-}
-
-function stopMask() {
-	$mask && $mask.remove();
-	// stopZoom();
-	$mask = null;
-}
-
-function startZoom() {
-	if($zoom) {
-		return;
-	}
-	$zoom = document.createElement('div');
-	$zoom.classList.add('spotlight-zoom');
-	$zoomScroller = option.el.cloneNode(true);
-	$zoomScroller.classList.add('spotlight-zoom-scroller');
-	$zoom.setAttribute('style', `
-		width: ${option.radius}px; 
-		height: ${option.radius}px;`
-	);
-	document.body.appendChild($zoom);
-	$zoom.appendChild($zoomScroller);
-	// $zoom.find('.remark-slide-content').scrollTop($document.find('.remark-slide-container.remark-visible .remark-slide-content').scrollTop());
-	setZoom();
-}
-
-function stopZoom() {
-	$zoom && $zoom.remove();
-	$zoom = null;
-}
-
-function setSpotLight(e) {
-	x = e.pageX;
-	y = e.pageY;
-
-	if(!$mask) {
-		return;
-	}
-
-	if (!e.shiftKey) {
-		stopMask();
-	}
-
-	if (!e[option.zoomKey] && $zoom) {
-		// stopZoom();
-	}
-
-	setMask();
-
-	if (e[option.zoomKey]) {
-		setZoom();
-	}
-}
-
-function setMask() {
-	let imageCss = getBackGroundImageCss(x, y, option.radius);
-	$mask.setAttribute('style', `background-image: ${imageCss}; background-image: -webkit-${imageCss};`)
-}
-
-function setZoom() {
-	defaultTop = option.el.scrollTop;
-	defaultLeft = option.el.scrollLeft;
-	$zoom.style.top = `${y - option.radius / 2}px`;
-	$zoom.style.left = `${x - option.radius / 2}px`;
-	$zoomScroller.style.marginTop = -y + option.radius / 2 + parseInt(defaultTop, 10) + 'px';
-	$zoomScroller.style.marginLeft = -x + option.radius/ 2 + parseInt(defaultLeft, 10) + 'px';
-	console.log($zoomScroller)
-	// $zoom.css({top: y - option.radius / 2, left: x - option.radius / 2});
-	// defaultTop.css('top', -y + option.radius / 2 + parseInt(defaultTop, 10));
-	// $zoom.find('.remark-slide-scaler').css('left', -x + option.radius/ 2 + parseInt(defaultLeft, 10));
-}
-
-function getBackGroundImageCss(x, y, radius) {
-	return 'radial-gradient(circle at ' + x + 'px ' + y + 'px, transparent ' + radius + 'px, '+ option.dimmedColor + ' 0)';
 }
 
 export {SpotLight}
