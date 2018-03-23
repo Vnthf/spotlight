@@ -1,0 +1,21 @@
+{
+  "name": "spotlight",
+  "description": "",
+  "main": "dist/spotlight.js",
+  "authors": [
+    "minho-choi"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "spotlight",
+    "zoom"
+  ],
+  "homepage": "https://github.com/Vnthf/spotlight",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
