@@ -2,7 +2,7 @@
   "name": "spotlight",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/spotlight.js",
   "scripts": {
     "dev": "webpack-dev-server --mode development",
     "build": "webpack --mode production",

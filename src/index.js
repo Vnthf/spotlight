@@ -21,7 +21,7 @@ class SpotLight {
 			radius: options.el.getBoundingClientRect().width / 4,
 		};
 
-		return Object.assign({}, options, defaultOptions);
+		return Object.assign({}, defaultOptions, options);
 	}
 
 	changeOption(options) {
@@ -112,6 +112,8 @@ class SpotLight {
 		document.body.appendChild(this.$zoom);
 		this.$zoom.appendChild(this.$zoomContent);
 		this.elRect = this.options.el.getBoundingClientRect();
+		this.$zoomContent.scrollTop = parseInt(this.options.el.scrollTop, 10);
+		this.$zoomContent.scrollLeft = parseInt(this.options.el.scrollLeft, 10);
 		this.setZoom();
 	}
 
@@ -121,8 +123,6 @@ class SpotLight {
 		this.$zoom.style.left = `${this.x - this.options.radius }px`;
 		this.$zoomContent.style.top = `${this.y - this.options.radius}px`;
 		this.$zoomContent.style.left = `${this.x - this.options.radius}px`;
-		this.$zoomContent.scrollTop = parseInt(this.options.el.scrollTop, 10);
-		this.$zoomContent.scrollLeft = parseInt(this.options.el.scrollLeft, 10);
 		this.$zoomContent.style.marginTop = - scale * (this.y - this.elRect.top) + this.options.el.offsetHeight * (scale -1)/2 + this.options.radius + 'px';
 		this.$zoomContent.style.marginLeft = - scale * (this.x - this.elRect.left) + this.options.el.offsetWidth * (scale -1)/2 + this.options.radius + 'px';
 	}
