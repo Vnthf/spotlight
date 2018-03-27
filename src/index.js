@@ -18,7 +18,8 @@ class SpotLight {
 			zoomScale: 2,
 			zIndex: 1000,
 			el: el,
-			radius: options.el.getBoundingClientRect().width / 4,
+			scrollEl: el,
+			radius: options.el.getBoundingClientRect().width / 6,
 		};
 
 		return Object.assign({}, defaultOptions, options);
@@ -109,11 +110,11 @@ class SpotLight {
 			overflow: ${this.options.el.style.overflow};
 			z-index: ${this.options.zIndex + 1}`
 		);
-		document.body.appendChild(this.$zoom);
+		this.options.el.parentNode.appendChild(this.$zoom);
 		this.$zoom.appendChild(this.$zoomContent);
 		this.elRect = this.options.el.getBoundingClientRect();
-		this.$zoomContent.scrollTop = parseInt(this.options.el.scrollTop, 10);
-		this.$zoomContent.scrollLeft = parseInt(this.options.el.scrollLeft, 10);
+		this.$zoomContent.scrollTop = parseInt(this.options.scrollEl.scrollTop, 10);
+		this.$zoomContent.scrollLeft = parseInt(this.options.scrollEl.scrollLeft, 10);
 		this.setZoom();
 	}
 
