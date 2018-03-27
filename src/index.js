@@ -111,7 +111,8 @@ class SpotLight {
 			overflow: ${this.options.el.style.overflow};
 			z-index: ${this.options.zIndex + 1}`
 		);
-		this.options.el.parentNode.appendChild(this.$zoom);
+		//TODO: 임시코드
+		this.options.el.parentNode.parentNode.insertBefore(this.$zoom);
 		this.$zoom.appendChild(this.$zoomContent);
 		this.elRect = this.options.el.getBoundingClientRect();
 		this.$zoomContent.scrollTop = parseInt(this.options.scrollEl.scrollTop, 10);
