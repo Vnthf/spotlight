@@ -99,6 +99,7 @@ class SpotLight {
 			height: ${this.options.radius * 2}px;
 			overflow: hidden;
 			border-radius: 50%;
+			display: block;
 			position: fixed;`
 		);
 		this.$zoomContent.setAttribute('style', `
