@@ -34,6 +34,9 @@ const config = {
 	devtool: 'inline-source-map',
 	devServer: {
 		overlay: true
+	},
+	optimization: {
+		minimize: false,
 	}
 }
 
