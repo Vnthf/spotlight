@@ -19,19 +19,13 @@
   },
   "homepage": "https://github.com/Vnthf/spotlight#readme",
   "devDependencies": {
-    "@babel/cli": "7.0.0-beta.40",
-    "@babel/core": "7.0.0-beta.40",
-    "@babel/preset-env": "7.0.0-beta.40",
-    "@babel/preset-flow": "7.0.0-beta.40",
-    "@babel/preset-stage-0": "7.0.0-beta.40",
-    "@babel/register": "7.0.0-beta.40",
-    "babel-eslint": "^8.0.0",
-    "babel-loader": "^8.0.0-beta.1",
-    "css-loader": "^0.28.7",
-    "protractor-webpack": "^1.1.0",
-    "style-loader": "^0.18.2",
-    "webpack": "^4.0.1",
-    "webpack-cli": "^2.0.9",
-    "webpack-dev-server": "^3.1.0"
+    "babel-core": "^6.26.3",
+    "babel-eslint": "^9.0.0",
+    "babel-loader": "^7.1.5",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-0": "^6.24.1",
+    "webpack": "^4.18.0",
+    "webpack-cli": "^3.1.0",
+    "webpack-dev-server": "^3.1.8"
   }
 }
