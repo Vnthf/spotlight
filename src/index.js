@@ -52,6 +52,7 @@ class SpotLight {
 		});
 
 		document.addEventListener('mousemove', this.onMove.bind(this));
+		document.addEventListener('resize', this.onResize.bind(this));
 	}
 
 	remove() {
@@ -108,11 +109,12 @@ class SpotLight {
 			height: ${this.options.el.offsetHeight}px;
 			background-color: ${this.options.zoomedColor};
 			position: fixed;
+			transform-origin: 0 0;
 			transform: scale(${this.options.zoomScale});
 			overflow: ${this.options.el.style.overflow};
 			z-index: ${this.options.zIndex + 1}`
 		);
-		//TODO: 임시코드
+
 		this.options.el.parentNode.parentNode.appendChild(this.$zoom);
 		this.$zoom.appendChild(this.$zoomContent);
 		this.elRect = this.options.el.getBoundingClientRect();
@@ -125,15 +127,19 @@ class SpotLight {
 		let scale = this.options.zoomScale;
 		this.$zoom.style.top = `${this.y - this.options.radius }px`;
 		this.$zoom.style.left = `${this.x - this.options.radius }px`;
-		this.$zoomContent.style.top = `${this.y - this.options.radius}px`;
-		this.$zoomContent.style.left = `${this.x - this.options.radius}px`;
-		this.$zoomContent.style.marginTop = - scale * (this.y - this.elRect.top) + this.options.el.offsetHeight * (scale -1)/2 + this.options.radius + 'px';
-		this.$zoomContent.style.marginLeft = - scale * (this.x - this.elRect.left) + this.options.el.offsetWidth * (scale -1)/2 + this.options.radius + 'px';
+		this.$zoomContent.style.top = `${-(scale- 1) * (this.y - this.elRect.top)}px`;
+		this.$zoomContent.style.left = `${-(scale - 1) * (this.x - this.elRect.left)}px`;
+		this.$zoomContent.style.marginTop = this.elRect.top + 'px';
+		this.$zoomContent.style.marginLeft = this.elRect.left + 'px';
 	}
 
 	stopZoom() {
 		this.$zoom && this.$zoom.remove();
 		this.$zoom = null;
+	}
+
+	onResize() {
+		this.elRect = this.options.el.getBoundingClientRect();
 	}
 
 	onMove(e) {
