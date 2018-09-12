@@ -16,14 +16,14 @@ class SpotLight {
 			zoomedColor: '#fff' || window.getComputedStyle(el, null)['backgroundColor'], //임시 코드
 			zoomKey: util.isMac()? 'metaKey': 'ctrlKey',
 			zoomScale: 2,
-			zoomElClassName: 'spotlight-zoom',
+			zoomElClassName: ['spotlight-zoom'],
 			zIndex: 1000,
 			el: el,
 			scrollEl: el,
 			radius: options.el.getBoundingClientRect().width / 6,
 		};
 
-		return Object.assign({}, defaultOptions, options);
+		return Object.assign({}, defaultOptions, this.options, options);
 	}
 
 	changeOption(options) {
@@ -93,7 +93,7 @@ class SpotLight {
 			return;
 		}
 		this.$zoom = document.createElement('div');
-		this.$zoom.classList.add(this.options.zoomElClassName);
+		this.$zoom.classList.add(...this.options.zoomElClassName);
 		this.$zoomContent = this.options.el.cloneNode(true);
 		this.$zoomContent.classList.add('spotlight-zoom-content');
 		this.$zoom.setAttribute('style', `
