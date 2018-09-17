@@ -14,13 +14,19 @@ class SpotLight {
 		let defaultOptions = {
 			dimmedColor: `rgba(0,0,0,0.4)`,
 			zoomedColor: '#fff' || window.getComputedStyle(el, null)['backgroundColor'], //임시 코드
-			zoomKey: util.isMac()? 'metaKey': 'ctrlKey',
+			zoomKey: util.isMac() ? 'metaKey' : 'ctrlKey',
 			zoomScale: 2,
 			zoomElClassName: ['spotlight-zoom'],
 			zIndex: 1000,
 			el: el,
 			scrollEl: el,
 			radius: options.el.getBoundingClientRect().width / 6,
+			preventEvent: false,
+			callback: {
+				movedSpotLight: () => {},
+				toggledMask: () => {},
+				toggledZoom: () => {}
+			}
 		};
 
 		return Object.assign({}, defaultOptions, this.options, options);
@@ -28,10 +34,14 @@ class SpotLight {
 
 	changeOption(options) {
 		this.options = this._computeOptions(options);
+		this.cb = this.options.callback;
 	}
 
 	_attachEvent() {
 		document.addEventListener('keyup', (e) => {
+			if (this.options.preventEvent) {
+				return;
+			}
 			if (KEY_CODE.SHIFT === e.keyCode) {
 				this.stopMask();
 			}
@@ -42,6 +52,9 @@ class SpotLight {
 		});
 
 		document.addEventListener('keydown', (e) => {
+			if (this.options.preventEvent) {
+				return;
+			}
 			if (KEY_CODE.SHIFT === e.keyCode) {
 				this.startMask();
 			}
@@ -51,26 +64,29 @@ class SpotLight {
 			}
 		});
 
-		document.addEventListener('mousemove', this.onMove.bind(this));
+		document.addEventListener('mousemove', (e) => {
+			if (this.options.preventEvent) {
+				return;
+			}
+			this.onMove(e)
+		});
 		document.addEventListener('resize', this.onResize.bind(this));
 	}
 
-	remove() {
-
-	}
-
 	startMask() {
-		if(this.$mask) {
+		if (this.$mask) {
 			return;
 		}
+		this.cb.toggledMask({on: true});
 		this.$mask = document.createElement('div');
 		this.$mask.classList.add('spotlight-mask');
 		document.body.appendChild(this.$mask);
 		this.setMask();
 	}
 
-	setMask() {
-		let imageCss = util.getMaskBackground(this.x, this.y, this.options);
+	setMask(x = this.x, y = this.y) {
+		this.cb.movedSpotLight({x, y});
+		let imageCss = util.getMaskBackground(x, y, this.options);
 		this.$mask.setAttribute('style', `
 			background-image: ${imageCss}; 
 			background-image: -webkit-${imageCss};
@@ -80,18 +96,21 @@ class SpotLight {
 			width: 100%;
 			height: 100%;
 			cursor: none;
-			z-index: ${this.options.zIndex}`)
+			z-index: ${this.options.zIndex}`);
 	}
 
 	stopMask() {
+		this.cb.toggledMask({on: false});
 		this.$mask && this.$mask.remove();
 		this.stopZoom();
 		this.$mask = null;
 	}
+
 	startZoom() {
-		if(this.$zoom) {
+		if (this.$zoom) {
 			return;
 		}
+		this.cb.toggledZoom({on: true});
 		this.$zoom = document.createElement('div');
 		this.$zoom.classList.add(...this.options.zoomElClassName);
 		this.$zoomContent = this.options.el.cloneNode(true);
@@ -123,17 +142,25 @@ class SpotLight {
 		this.setZoom();
 	}
 
-	setZoom() {
+	setZoom(x = this.x, y = this.y) {
+		this.cb.movedSpotLight({
+			x,
+			y,
+			radius: this.options.radius,
+			scale: this.options.scale,
+			position: {top: this.elRect.top, left: this.elRect.left}
+		});
 		let scale = this.options.zoomScale;
-		this.$zoom.style.top = `${this.y - this.options.radius }px`;
-		this.$zoom.style.left = `${this.x - this.options.radius }px`;
-		this.$zoomContent.style.top = `${-(scale- 1) * (this.y - this.elRect.top)}px`;
-		this.$zoomContent.style.left = `${-(scale - 1) * (this.x - this.elRect.left)}px`;
+		this.$zoom.style.top = `${y - this.options.radius }px`;
+		this.$zoom.style.left = `${x - this.options.radius }px`;
+		this.$zoomContent.style.top = `${-(scale - 1) * (y - this.elRect.top)}px`;
+		this.$zoomContent.style.left = `${-(scale - 1) * (x - this.elRect.left)}px`;
 		this.$zoomContent.style.marginTop = this.elRect.top + 'px';
 		this.$zoomContent.style.marginLeft = this.elRect.left + 'px';
 	}
 
 	stopZoom() {
+		this.cb.toggledZoom({on: false});
 		this.$zoom && this.$zoom.remove();
 		this.$zoom = null;
 	}
@@ -146,7 +173,7 @@ class SpotLight {
 		this.x = e.clientX;
 		this.y = e.clientY;
 
-		if(!this.$mask) {
+		if (!this.$mask) {
 			return;
 		}
 
