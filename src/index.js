@@ -20,7 +20,7 @@ class SpotLight {
 			zIndex: 1000,
 			el: el,
 			scrollEl: el,
-			radius: options.el.getBoundingClientRect().width / 6,
+			radius: el.getBoundingClientRect().width / 6,
 			preventEvent: false,
 			callback: {
 				movedSpotLight: () => {},
