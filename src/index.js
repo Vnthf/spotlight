@@ -30,7 +30,7 @@ class SpotLight {
 
 		let options = Object.assign({}, defaultOptions, this.options, _options);
 
-		if(!options.scrollEl) {
+		if(!_options.scrollEl) {
 			options.scrollEl = options.el;
 		}
 
