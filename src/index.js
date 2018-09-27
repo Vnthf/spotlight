@@ -8,8 +8,8 @@ class SpotLight {
 		this._attachEvent();
 	}
 
-	_computeOptions(options) {
-		let el = options.el || document.body.firstElementChild;
+	_computeOptions(_options) {
+		let el = _options.el || document.body.firstElementChild;
 
 		let defaultOptions = {
 			dimmedColor: `rgba(0,0,0,0.4)`,
@@ -29,7 +29,13 @@ class SpotLight {
 			}
 		};
 
-		return Object.assign({}, defaultOptions, this.options, options);
+		let options = Object.assign({}, defaultOptions, this.options, _options);
+
+		if(!options.scrollEl) {
+			options.scrollEl = options.el;
+		}
+
+		return options;
 	}
 
 	changeOption(options) {
@@ -126,6 +132,7 @@ class SpotLight {
 		this.$zoomContent.setAttribute('style', `
 			width: ${this.options.el.offsetWidth}px; 
 			height: ${this.options.el.offsetHeight}px;
+			box-sizing: border-box;
 			background-color: ${this.options.zoomedColor};
 			position: fixed;
 			transform-origin: 0 0;
