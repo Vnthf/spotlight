@@ -19,7 +19,6 @@ class SpotLight {
 			zoomElClassName: ['spotlight-zoom'],
 			zIndex: 1000,
 			el: el,
-			scrollEl: el,
 			radius: el.getBoundingClientRect().width / 6,
 			preventEvent: false,
 			callback: {
