@@ -52,7 +52,7 @@ class SpotLight {
 			}
 
 			if (KEY_CODE.CTRL === e.keyCode) {
-				// this.stopZoom();
+				this.stopZoom();
 			}
 		});
 
@@ -107,7 +107,7 @@ class SpotLight {
 	stopMask() {
 		this.cb.toggledMask({on: false});
 		this.$mask && this.$mask.remove();
-		// this.stopZoom();
+		this.stopZoom();
 		this.$mask = null;
 	}
 
@@ -190,7 +190,7 @@ class SpotLight {
 		}
 
 		if (!e[this.options.zoomKey] && this.$zoom) {
-			// this.stopZoom();
+			this.stopZoom();
 		}
 
 		this.setMask();
