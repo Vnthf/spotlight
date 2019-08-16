@@ -52,7 +52,7 @@ class SpotLight {
 			}
 
 			if (KEY_CODE.CTRL === e.keyCode) {
-				this.stopZoom();
+				// this.stopZoom();
 			}
 		});
 
@@ -107,7 +107,7 @@ class SpotLight {
 	stopMask() {
 		this.cb.toggledMask({on: false});
 		this.$mask && this.$mask.remove();
-		this.stopZoom();
+		// this.stopZoom();
 		this.$mask = null;
 	}
 
@@ -133,7 +133,7 @@ class SpotLight {
 			height: ${this.options.el.offsetHeight}px;
 			box-sizing: border-box;
 			background-color: ${this.options.zoomedColor};
-			position: fixed;
+			position: absolute;
 			transform-origin: 0 0;
 			transform: scale(${this.options.zoomScale});
 			overflow: ${this.options.el.style.overflow};
@@ -159,10 +159,12 @@ class SpotLight {
 		let scale = this.options.zoomScale;
 		this.$zoom.style.top = `${y - this.options.radius }px`;
 		this.$zoom.style.left = `${x - this.options.radius }px`;
-		this.$zoomContent.style.top = `${-(scale - 1) * (y - this.elRect.top)}px`;
-		this.$zoomContent.style.left = `${-(scale - 1) * (x - this.elRect.left)}px`;
-		this.$zoomContent.style.marginTop = this.elRect.top + 'px';
-		this.$zoomContent.style.marginLeft = this.elRect.left + 'px';
+		this.$zoomContent.style.top = `${-(scale) * (y - this.elRect.top) + this.options.radius}px`;
+		this.$zoomContent.style.left = `${-(scale) * (x - this.elRect.left) + this.options.radius}px`;
+		// this.$zoomContent.style.top = `${-(scale - 1) * (y - this.elRect.top)}px`;
+		// this.$zoomContent.style.left = `${-(scale - 1) * (x - this.elRect.left - this.options.radius)}px`;
+		// this.$zoomContent.style.marginTop = this.elRect.top + 'px';
+		// this.$zoomContent.style.marginLeft = this.elRect.left + 'px';
 	}
 
 	stopZoom() {
@@ -188,7 +190,7 @@ class SpotLight {
 		}
 
 		if (!e[this.options.zoomKey] && this.$zoom) {
-			this.stopZoom();
+			// this.stopZoom();
 		}
 
 		this.setMask();
